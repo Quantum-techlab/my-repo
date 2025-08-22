@@ -1,0 +1,355 @@
+  :root {
+        --bg-color: #f9f9f9; /* Light gray background for light mode */
+        --text-color: #333333; /* Dark text for contrast */
+        --button-bg: #09545a; /* Blue button background */
+        --button-hover-bg: #287081; /* Darker blue for hover */
+        --progress-bg: linear-gradient(
+          to right,
+          rgb(222, 88, 30),
+          #bee647,
+          #49e951dc
+        ); /* Green gradient for progress bar */
+        --card-bg: #ffffff; /* White background for cards/containers */
+        --card-shadow: 0 4rem 8rem rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.5s ease, color 0.5s ease; /* Smooth transition */
+      }
+
+      h1 {
+        font-size: 5rem;
+        font-weight: 700;
+        margin-top: 8rem;
+        background-image: linear-gradient(
+          to right,
+          rgb(0, 0, 255),
+          rgb(75, 128, 252),
+          rgb(107, 191, 250)
+        );
+        -webkit-background-clip: text;
+        display: inline-block;
+        color: transparent; /* Blue text for the header */
+        animation-name: movesinleft;
+        animation-duration: 5s;
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 3rem;
+        }
+      }
+      @keyframes movesinleft {
+        0% {
+          opacity: 0;
+          transform: translateX(-100px);
+        }
+        80% {
+          opacity: 1;
+          transform: translateX(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(0);
+        }
+      }
+
+      p {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #555555; /* Subtle gray for paragraph text */
+      }
+      .pp {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        color: #555555; /* Subtle gray for paragraph text */
+      }
+      @media (max-width: 600px) {
+        p {
+          font-size: 1.5rem;
+        }
+      }
+      .upload-area {
+        margin: 1rem auto;
+        border: 2px dashed #3498db;
+        background-color: rgb(189, 227, 239);
+        border-radius: 1rem;
+        padding: 3rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .upload-area:hover {
+        background-color: #f0f8ff;
+        border-color: #2980b9;
+      }
+
+      .upload-area.dragover {
+        background-color: #d1ecf1; /* Highlight background when dragging files */
+        border-color: #17a2b8; /* Highlight border when dragging files */
+      }
+
+      #output {
+        margin-top: 3rem;
+        white-space: pre-wrap;
+        background-color: var(--card-bg);
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        width: 50%;
+        margin: 2rem auto;
+        box-shadow: var(--card-shadow);
+        font-size: 1.5rem;
+        color: var(--text-color);
+        text-align: left;
+        height: 20rem;
+        overflow-y: auto;
+      }
+      @media (max-width: 600px) {
+        #output {
+          padding: 2rem;
+          width: 20%;
+          font-size: 1rem;
+          height: 10rem;
+        }
+      }
+
+      #progressContainer {
+        margin-top: 20rem;
+        width: 20%;
+        margin: 2rem auto;
+        background-color: var(--card-bg);
+        border: 0.1rem solid #ddd;
+        border-radius: 10rem;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+      }
+
+      #progressBar {
+        height: 2rem;
+        width: 0%;
+        background: var(--progress-bg);
+        transition: width 0.3s ease;
+      }
+
+      button {
+        font-family: "Arial", sans-serif;
+        font-size: 1.2rem;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 3rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: var(--card-shadow);
+        color: white;
+      }
+
+      button:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+      }
+
+      #submitBtn,
+      #toggleModeBtn,
+      #copyBtn {
+        background-color: var(--button-bg);
+      }
+
+      #submitBtn:hover,
+      #toggleModeBtn:hover,
+      #copyBtn:hover {
+        background-color: var(--button-hover-bg);
+      }
+
+      #toggleModeBtn {
+        position: fixed;
+        top: 5.5rem;
+        right: 7rem;
+        width: 6rem;
+        height: 6rem;
+        padding: 1rem;
+        font-size: 7rem;
+        background-color: var(--button-bg);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--card-shadow);
+      }
+      @media (max-width: 600px) {
+        #toggleModeBtn {
+          font-size: 2rem;
+        }
+      }
+
+      #toggleModeBtn:hover {
+        background-color: var(--button-hover-bg);
+        transform: scale(1.1);
+      }
+
+      .dark-mode {
+        --bg-color: #1e1e1e;
+        --text-color: #f4f4f4;
+        --button-bg: #7847f5;
+        --button-hover-bg: #bf85e8;
+        --progress-bg: linear-gradient(
+          to right,
+          rgb(222, 88, 30),
+          #bee647,
+          #49e951dc
+        ); /* Orange gradient for progress bar */
+        --card-bg: #2c2c2c;
+        --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      }
+      /* For screens up to 600px */
+      @media (max-width: 600px) {
+        body {
+          font-size: 14px; /* Smaller font size for smaller screens */
+        }
+
+        h1 {
+          font-size: 2.5rem; /* Adjust header size */
+          margin-top: 4rem; /* Reduce margin */
+        }
+
+        .upload-area {
+          margin: 1rem auto;
+          padding: 1rem;
+          width: 90%; /* Full width for smaller screens */
+        }
+
+        #output {
+          width: 90%; /* Full width for smaller screens */
+          height: 15rem; /* Adjust height */
+          font-size: 1rem; /* Smaller font size */
+        }
+
+        #progressContainer {
+          width: 90%; /* Full width for progress bar */
+        }
+
+        #toggleModeBtn {
+          top: 2rem; /* Adjust position */
+          right: 2rem; /* Adjust position */
+          width: 50px; /* Smaller button size */
+          height: 50px;
+          font-size: 1.5rem; /* Smaller icon size */
+        }
+      }
+
+      /* For screens between 601px and 900px */
+      @media (min-width: 601px) and (max-width: 900px) {
+        body {
+          font-size: 16px; /* Medium font size */
+        }
+
+        h1 {
+          font-size: 3.5rem; /* Adjust header size */
+          margin-top: 6rem; /* Adjust margin */
+        }
+
+        .upload-area {
+          margin: 2rem auto;
+          padding: 2rem;
+          width: 80%; /* Adjust width */
+        }
+
+        #output {
+          width: 80%; /* Adjust width */
+          height: 20rem; /* Adjust height */
+          font-size: 1.2rem; /* Medium font size */
+        }
+
+        #progressContainer {
+          width: 80%; /* Adjust width for progress bar */
+        }
+
+        #toggleModeBtn {
+          top: 3rem; /* Adjust position */
+          right: 3rem; /* Adjust position */
+          width: 60px; /* Medium button size */
+          height: 60px;
+          font-size: 2rem; /* Medium icon size */
+        }
+      }
+
+      /* For screens between 901px and 1800px */
+      @media (min-width: 901px) and (max-width: 1800px) {
+        body {
+          font-size: 18px; /* Larger font size */
+        }
+
+        h1 {
+          font-size: 4rem; /* Adjust header size */
+          margin-top: 8rem; /* Adjust margin */
+        }
+
+        .upload-area {
+          margin: 3rem auto;
+          padding: 3rem;
+          width: 70%; /* Adjust width */
+        }
+
+        #output {
+          width: 70%; /* Adjust width */
+          height: 25rem; /* Adjust height */
+          font-size: 1.5rem; /* Larger font size */
+        }
+
+        #progressContainer {
+          width: 70%; /* Adjust width for progress bar */
+        }
+
+        #toggleModeBtn {
+          top: 4rem; /* Adjust position */
+          right: 4rem; /* Adjust position */
+          width: 70px; /* Larger button size */
+          height: 70px;
+          font-size: 2.5rem; /* Larger icon size */
+        }
+      }
+
+      /* For screens larger than 1800px */
+      @media (min-width: 1801px) {
+        body {
+          font-size: 20px; /* Larger font size for large screens */
+        }
+
+        h1 {
+          font-size: 5rem; /* Larger header size */
+          margin-top: 10rem; /* Adjust margin */
+        }
+
+        .upload-area {
+          margin: 4rem auto;
+          padding: 4rem;
+          width: 60%; /* Adjust width */
+        }
+
+        #output {
+          width: 60%; /* Adjust width */
+          height: 30rem; /* Adjust height */
+          font-size: 1.8rem; /* Larger font size */
+        }
+
+        #progressContainer {
+          width: 60%; /* Adjust width for progress bar */
+        }
+
+        #toggleModeBtn {
+          top: 5rem; /* Adjust position */
+          right: 5rem; /* Adjust position */
+          width: 80px; /* Larger button size */
+          height: 80px;
+          font-size: 3rem; /* Larger icon size */
+        }
+      }
