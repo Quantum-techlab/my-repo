@@ -3,40 +3,119 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Text Extractor</title>
+    <title>Text Extractor - Extract Text from Images</title>
+    <meta name="description" content="Extract text from images using OCR technology. Fast, accurate, and easy to use." />
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Let's Extract It for You</h1>
-    <p>Upload an image to extract text from it:</p>
-    <div class="upload-area" id="uploadArea">
-      <h2>Upload Image File</h2>
-      <p class="pp">Click to browse or drag and drop your image file</p>
-      <input
-        type="file"
-        id="imageInput"
-        accept="image/*"
-        style="display: none"
-      />
+    <button id="toggleModeBtn" class="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+
+    <div class="container">
+      <header class="header">
+        <h1 class="title">Image Text Extractor</h1>
+        <p class="subtitle">Extract text from any image using advanced OCR technology</p>
+      </header>
+
+      <main class="main-content">
+        <div class="upload-section">
+          <div class="upload-area" id="uploadArea">
+            <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <h2 class="upload-title">Drop your image here</h2>
+            <p class="upload-description">or click to browse</p>
+            <p class="upload-formats">Supports JPG, PNG, GIF, BMP</p>
+            <input
+              type="file"
+              id="imageInput"
+              accept="image/*"
+              style="display: none"
+              aria-label="Upload image file"
+            />
+          </div>
+
+          <div class="preview-container" id="previewContainer" style="display: none;">
+            <img id="imagePreview" alt="Preview of uploaded image" />
+            <button class="remove-image" id="removeImage" aria-label="Remove image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <button class="btn btn-primary" id="submitBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Extract Text
+          </button>
+
+          <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-label">
+              <span id="progressText">Processing...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="results-header">
+            <h3 class="results-title">Extracted Text</h3>
+            <button class="btn btn-secondary" id="copyBtn" style="display: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy Text
+            </button>
+          </div>
+          <div class="output-box" id="output">
+            <div class="empty-state">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <p>Your extracted text will appear here</p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>Powered by Tesseract.js OCR Engine</p>
+      </footer>
     </div>
-    <button
-      id="submitBtn"
-      title="Click to extract text from the uploaded image"
-    >
-      🖼️ Extract Text
-    </button>
-    <button id="toggleModeBtn" title="Toggle between light and dark mode">
-      <span class="icon" id="modeIcon">🌞</span>
-    </button>
-    <div id="progressContainer">
-      <div id="progressBar"></div>
-    </div>
-    <div id="output">Your extracted text will appear here...</div>
-    <button id="copyBtn" title="Click to copy the extracted text">
-      📋 Copy Text
-    </button>
- <script src="script.js"></script>
-  
+
+    <script src="script.js"></script>
   </body>
 </html>
