@@ -1,4 +1,7 @@
+import { createWorker } from 'tesseract.js';
+
 let selectedFile = null;
+let worker = null;
 
 const imageInput = document.getElementById("imageInput");
 const uploadArea = document.getElementById("uploadArea");
@@ -87,7 +90,7 @@ uploadArea.addEventListener("drop", (event) => {
   }
 });
 
-submitBtn.addEventListener("click", function () {
+submitBtn.addEventListener("click", async function () {
   if (!selectedFile) {
     output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">Please select an image first</p></div>`;
     return;
@@ -101,46 +104,42 @@ submitBtn.addEventListener("click", function () {
 
   output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">Processing your image...</p></div>`;
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.src = e.target.result;
-    img.onload = function () {
-      Tesseract.recognize(img.src, "eng", {
-        logger: (info) => {
-          if (info.status === "recognizing text") {
-            const progress = Math.round(info.progress * 100);
+  try {
+    if (!worker) {
+      worker = await createWorker('eng', 1, {
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            const progress = Math.round(m.progress * 100);
             progressBar.style.width = progress + "%";
             progressPercent.textContent = progress + "%";
           }
-        },
-      })
-        .then(({ data: { text } }) => {
-          progressBar.style.width = "100%";
-          progressPercent.textContent = "100%";
+        }
+      });
+    }
 
-          if (text && text.trim()) {
-            output.textContent = text;
-            copyBtn.style.display = "flex";
-          } else {
-            output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">No text found in the image</p></div>`;
-          }
+    const { data: { text } } = await worker.recognize(selectedFile);
 
-          submitBtn.disabled = false;
-          setTimeout(() => {
-            progressContainer.style.display = "none";
-          }, 1000);
-        })
-        .catch((error) => {
-          output.innerHTML = `<div class="empty-state"><p style="color: #ef4444;">Error: ${error.message}</p></div>`;
-          progressBar.style.width = "0%";
-          progressPercent.textContent = "0%";
-          submitBtn.disabled = false;
-          progressContainer.style.display = "none";
-        });
-    };
-  };
-  reader.readAsDataURL(selectedFile);
+    progressBar.style.width = "100%";
+    progressPercent.textContent = "100%";
+
+    if (text && text.trim()) {
+      output.textContent = text;
+      copyBtn.style.display = "flex";
+    } else {
+      output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">No text found in the image</p></div>`;
+    }
+
+    submitBtn.disabled = false;
+    setTimeout(() => {
+      progressContainer.style.display = "none";
+    }, 1000);
+  } catch (error) {
+    output.innerHTML = `<div class="empty-state"><p style="color: #ef4444;">Error: ${error.message}</p></div>`;
+    progressBar.style.width = "0%";
+    progressPercent.textContent = "0%";
+    submitBtn.disabled = false;
+    progressContainer.style.display = "none";
+  }
 });
 
 copyBtn.addEventListener("click", async function () {

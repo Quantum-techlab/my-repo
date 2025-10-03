@@ -1,0 +1,25 @@
+{
+  "name": "image-text-extractor",
+  "version": "1.0.0",
+  "description": "Extract text from images using OCR technology",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "ocr",
+    "text-extraction",
+    "image-processing",
+    "tesseract"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "tesseract.js": "^5.0.0"
+  }
+}
