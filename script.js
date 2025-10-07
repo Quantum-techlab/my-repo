@@ -225,15 +225,23 @@ copyBtn.addEventListener("click", async function () {
 });
 
 toggleModeBtn.addEventListener("click", function () {
-  document.body.classList.toggle("dark-mode");
+  const willBeDark = !document.body.classList.contains("dark-mode");
 
-  const isDarkMode = document.body.classList.contains("dark-mode");
-  localStorage.setItem("darkMode", isDarkMode);
+  if (willBeDark) {
+    toggleModeBtn.classList.add("falling");
+  } else {
+    toggleModeBtn.classList.add("rising");
+  }
 
-  toggleModeBtn.style.transform = 'rotate(360deg)';
   setTimeout(() => {
-    toggleModeBtn.style.transform = '';
-  }, 300);
+    document.body.classList.toggle("dark-mode");
+    const isDarkMode = document.body.classList.contains("dark-mode");
+    localStorage.setItem("darkMode", isDarkMode);
+  }, 400);
+
+  setTimeout(() => {
+    toggleModeBtn.classList.remove("falling", "rising");
+  }, 800);
 });
 
 const savedDarkMode = localStorage.getItem("darkMode");
