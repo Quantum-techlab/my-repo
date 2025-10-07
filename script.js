@@ -92,17 +92,37 @@ uploadArea.addEventListener("drop", (event) => {
 
 submitBtn.addEventListener("click", async function () {
   if (!selectedFile) {
-    output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">Please select an image first</p></div>`;
+    output.innerHTML = `<div class="empty-state processing"><p style="color: var(--color-text-primary);">Please select an image first</p></div>`;
+    setTimeout(() => {
+      output.classList.remove('processing');
+    }, 2000);
     return;
   }
 
   submitBtn.disabled = true;
+  submitBtn.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+    </svg>
+    Processing...
+  `;
   progressContainer.style.display = "block";
   progressBar.style.width = "0%";
   progressPercent.textContent = "0%";
   copyBtn.style.display = "none";
 
-  output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">Processing your image...</p></div>`;
+  output.innerHTML = `<div class="empty-state processing"><p style="color: var(--color-text-primary);">Processing your image...</p></div>`;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  `;
+  if (!document.querySelector('style[data-animations]')) {
+    style.setAttribute('data-animations', 'true');
+    document.head.appendChild(style);
+  }
 
   try {
     if (!worker) {
@@ -124,20 +144,37 @@ submitBtn.addEventListener("click", async function () {
 
     if (text && text.trim()) {
       output.textContent = text;
+      output.style.animation = 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
       copyBtn.style.display = "flex";
     } else {
       output.innerHTML = `<div class="empty-state"><p style="color: var(--color-text-primary);">No text found in the image</p></div>`;
     }
 
     submitBtn.disabled = false;
+    submitBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Extract Text
+    `;
     setTimeout(() => {
       progressContainer.style.display = "none";
     }, 1000);
   } catch (error) {
-    output.innerHTML = `<div class="empty-state"><p style="color: #ef4444;">Error: ${error.message}</p></div>`;
+    output.innerHTML = `<div class="empty-state"><p style="color: var(--color-error);">Error: ${error.message}</p></div>`;
     progressBar.style.width = "0%";
     progressPercent.textContent = "0%";
     submitBtn.disabled = false;
+    submitBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Extract Text
+    `;
     progressContainer.style.display = "none";
   }
 });
@@ -155,12 +192,35 @@ copyBtn.addEventListener("click", async function () {
       </svg>
       Copied!
     `;
+    copyBtn.style.background = 'var(--color-success)';
+    copyBtn.style.color = 'white';
+    copyBtn.style.borderColor = 'var(--color-success)';
 
     setTimeout(() => {
       copyBtn.innerHTML = originalHTML;
+      copyBtn.style.background = '';
+      copyBtn.style.color = '';
+      copyBtn.style.borderColor = '';
     }, 2000);
   } catch (err) {
     console.error("Failed to copy:", err);
+    const originalHTML = copyBtn.innerHTML;
+    copyBtn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      Failed
+    `;
+    copyBtn.style.background = 'var(--color-error)';
+    copyBtn.style.color = 'white';
+    copyBtn.style.borderColor = 'var(--color-error)';
+    setTimeout(() => {
+      copyBtn.innerHTML = originalHTML;
+      copyBtn.style.background = '';
+      copyBtn.style.color = '';
+      copyBtn.style.borderColor = '';
+    }, 2000);
   }
 });
 
@@ -169,9 +229,34 @@ toggleModeBtn.addEventListener("click", function () {
 
   const isDarkMode = document.body.classList.contains("dark-mode");
   localStorage.setItem("darkMode", isDarkMode);
+
+  toggleModeBtn.style.transform = 'rotate(360deg)';
+  setTimeout(() => {
+    toggleModeBtn.style.transform = '';
+  }, 300);
 });
 
 const savedDarkMode = localStorage.getItem("darkMode");
 if (savedDarkMode === "true") {
   document.body.classList.add("dark-mode");
 }
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.upload-section, .results-section').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+  observer.observe(el);
+});
+
+window.addEventListener('load', () => {
+  document.body.style.opacity = '1';
+});
